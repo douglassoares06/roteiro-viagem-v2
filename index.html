@@ -1,0 +1,2234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Roteiro Europa · Douglas & Caroline</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --lisboa-bg: #1a1008;
+    --lisboa-accent: #e8a020;
+    --lisboa-soft: #f5d99a;
+    --lisboa-card: #241a0e;
+    --madri-bg: #0e0a18;
+    --madri-accent: #c0392b;
+    --madri-soft: #f1a1a1;
+    --madri-card: #180f18;
+    --paris-bg: #080c18;
+    --paris-accent: #4a90d9;
+    --paris-soft: #a8c8f0;
+    --paris-card: #0c1020;
+    --barcelona-bg: #0c1508;
+    --barcelona-accent: #e8961a;
+    --barcelona-soft: #f0c070;
+    --barcelona-card: #14200c;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #0a0a0a;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .phone-shell {
+    width: 100%;
+    max-width: 430px;
+    min-height: 100vh;
+    background: #0a0a0a;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .city-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 16px 16px 0;
+    background: #0a0a0a;
+  }
+
+  .trip-header {
+    text-align: center;
+    padding: 20px 0 12px;
+  }
+  .trip-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: #fff;
+    letter-spacing: 0.5px;
+  }
+  .trip-subtitle {
+    font-size: 12px;
+    color: #666;
+    margin-top: 3px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .city-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 12px 0 8px;
+    scrollbar-width: none;
+  }
+  .city-tabs::-webkit-scrollbar { display: none; }
+
+  .city-tab {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border-radius: 30px;
+    border: 1.5px solid #333;
+    background: transparent;
+    color: #888;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+  }
+
+  .city-tab.active-lisboa  { border-color: var(--lisboa-accent);   background: rgba(232,160,32,0.12);  color: var(--lisboa-accent); }
+  .city-tab.active-madri   { border-color: var(--madri-accent);    background: rgba(192,57,43,0.12);   color: var(--madri-accent); }
+  .city-tab.active-paris   { border-color: var(--paris-accent);    background: rgba(74,144,217,0.12);  color: var(--paris-accent); }
+  .city-tab.active-barcelona{ border-color: var(--barcelona-accent);background: rgba(232,150,26,0.12); color: var(--barcelona-accent); }
+  .city-tab.active-lisboa2 { border-color: var(--lisboa-accent);   background: rgba(232,160,32,0.12);  color: var(--lisboa-accent); }
+
+  .city-view { display: none; }
+  .city-view.active { display: block; }
+
+  .city-hero {
+    margin: 0 16px 20px;
+    border-radius: var(--radius);
+    padding: 28px 22px 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .city-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.08;
+    background-image: radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+  .hero-lisboa   { background: linear-gradient(135deg, #2d1a06, #4a2e0a); border: 1px solid rgba(232,160,32,0.3); }
+  .hero-madri    { background: linear-gradient(135deg, #1a0808, #2d0f0f); border: 1px solid rgba(192,57,43,0.3); }
+  .hero-paris    { background: linear-gradient(135deg, #080e20, #0f1a35); border: 1px solid rgba(74,144,217,0.3); }
+  .hero-barcelona{ background: linear-gradient(135deg, #0e1a06, #1a2e0a); border: 1px solid rgba(232,150,26,0.3); }
+
+  .hero-emoji { font-size: 36px; margin-bottom: 8px; }
+  .hero-city-name { font-family: 'Playfair Display', serif; font-size: 28px; color: #fff; font-weight: 700; }
+  .hero-dates { font-size: 13px; color: #bbb; margin-top: 4px; }
+  .hero-tags { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .hero-tag { font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 500; letter-spacing: 0.3px; }
+  .tag-lisboa    { background: rgba(232,160,32,0.2);  color: var(--lisboa-soft); }
+  .tag-madri     { background: rgba(192,57,43,0.2);   color: var(--madri-soft); }
+  .tag-paris     { background: rgba(74,144,217,0.2);  color: var(--paris-soft); }
+  .tag-barcelona { background: rgba(232,150,26,0.2);  color: var(--barcelona-soft); }
+
+  .hero-budget {
+    margin-top: 14px; padding: 10px 14px; border-radius: var(--radius-sm);
+    background: rgba(0,0,0,0.3); display: flex; align-items: center; gap: 8px;
+  }
+  .hero-budget-label { font-size: 11px; color: #888; }
+  .hero-budget-val   { font-size: 14px; font-weight: 600; }
+  .bv-lisboa    { color: var(--lisboa-soft); }
+  .bv-madri     { color: var(--madri-soft); }
+  .bv-paris     { color: var(--paris-soft); }
+  .bv-barcelona { color: var(--barcelona-soft); }
+
+  .day-selector { display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 16px; scrollbar-width: none; }
+  .day-selector::-webkit-scrollbar { display: none; }
+
+  .day-btn {
+    flex-shrink: 0; width: 52px; height: 62px; border-radius: 14px;
+    border: 1.5px solid #2a2a2a; background: #111; color: #666;
+    font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  }
+  .day-btn .day-num   { font-size: 18px; font-weight: 600; }
+  .day-btn .day-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .day-btn.active-lisboa    { border-color: var(--lisboa-accent);    background: rgba(232,160,32,0.1);  color: var(--lisboa-accent); }
+  .day-btn.active-madri     { border-color: var(--madri-accent);     background: rgba(192,57,43,0.1);   color: var(--madri-accent); }
+  .day-btn.active-paris     { border-color: var(--paris-accent);     background: rgba(74,144,217,0.1);  color: var(--paris-accent); }
+  .day-btn.active-barcelona { border-color: var(--barcelona-accent); background: rgba(232,150,26,0.1);  color: var(--barcelona-accent); }
+  .day-btn.active-lisboa2   { border-color: var(--lisboa-accent);    background: rgba(232,160,32,0.1);  color: var(--lisboa-accent); }
+
+  .timeline { padding: 0 16px 100px; }
+
+  .day-content { display: none; }
+  .day-content.active { display: block; }
+
+  .day-title-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .day-title-bar h3 { font-family: 'Playfair Display', serif; font-size: 18px; color: #fff; font-weight: 600; }
+  .day-title-bar span { font-size: 12px; color: #666; }
+
+  .activity { display: flex; gap: 14px; margin-bottom: 12px; position: relative; }
+  .activity::before {
+    content: ''; position: absolute; left: 28px; top: 44px;
+    width: 1px; height: calc(100% - 28px); background: #222;
+  }
+  .activity:last-child::before { display: none; }
+
+  .act-time { flex-shrink: 0; width: 56px; text-align: right; padding-top: 12px; }
+  .act-time span { font-size: 11px; color: #555; font-weight: 500; }
+
+  .act-dot { flex-shrink: 0; width: 14px; display: flex; flex-direction: column; align-items: center; padding-top: 16px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-lisboa    { background: var(--lisboa-accent); }
+  .dot-madri     { background: var(--madri-accent); }
+  .dot-paris     { background: var(--paris-accent); }
+  .dot-barcelona { background: var(--barcelona-accent); }
+
+  .act-card {
+    flex: 1; border-radius: var(--radius-sm); padding: 12px 14px;
+    border: 1px solid #1e1e1e; background: #111; transition: all 0.2s; cursor: pointer;
+  }
+  .act-card:hover { background: #161616; }
+
+  .act-type { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 4px; }
+  .type-lisboa    { color: var(--lisboa-accent); }
+  .type-madri     { color: var(--madri-accent); }
+  .type-paris     { color: var(--paris-accent); }
+  .type-barcelona { color: var(--barcelona-accent); }
+
+  .act-name  { font-size: 14px; font-weight: 600; color: #eee; margin-bottom: 4px; line-height: 1.3; }
+  .act-desc  { font-size: 12px; color: #777; line-height: 1.5; }
+  .act-meta  { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .meta-chip { font-size: 10px; padding: 3px 8px; border-radius: 6px; background: #1a1a1a; color: #888; border: 1px solid #252525; }
+  .meta-chip.cost      { color: #5cba7d; border-color: #1a3325; background: #0f1e17; }
+  .meta-chip.tip       { color: #d4a84b; border-color: #332a10; background: #1a1508; }
+  .meta-chip.transport { color: #7b9ed4; border-color: #1a2535; background: #0f1520; }
+
+  .section-div { display: flex; align-items: center; gap: 10px; margin: 20px 0 14px; }
+  .section-div hr { flex: 1; border: none; border-top: 1px solid #1e1e1e; }
+  .section-div span { font-size: 11px; color: #444; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* alternatives box */
+  .alt-box {
+    background: #0e0e0e; border: 1px dashed #2a2a2a; border-radius: var(--radius-sm);
+    padding: 12px 14px; margin-top: 8px;
+  }
+  .alt-title { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .alt-item  { font-size: 12px; color: #666; margin-bottom: 6px; line-height: 1.4; }
+  .alt-item strong { color: #999; }
+
+  .budget-card { margin: 0 16px 20px; padding: 16px; border-radius: var(--radius); background: #111; border: 1px solid #1e1e1e; }
+  .budget-header { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #555; margin-bottom: 12px; }
+  .budget-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .budget-label  { font-size: 12px; color: #888; }
+  .budget-amount { font-size: 13px; font-weight: 600; }
+  .ba-lisboa    { color: var(--lisboa-soft); }
+  .ba-madri     { color: var(--madri-soft); }
+  .ba-paris     { color: var(--paris-soft); }
+  .ba-barcelona { color: var(--barcelona-soft); }
+  .budget-total { margin-top: 10px; padding-top: 10px; border-top: 1px solid #1e1e1e; display: flex; justify-content: space-between; align-items: center; }
+  .budget-total-label  { font-size: 13px; font-weight: 600; color: #ccc; }
+  .budget-total-amount { font-size: 15px; font-weight: 700; color: #fff; }
+
+  .tips-box { margin: 0 16px 20px; padding: 16px; border-radius: var(--radius); border: 1px solid #1e1e1e; background: #0e0e0e; }
+  .tips-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #555; margin-bottom: 12px; }
+  .tip-item { display: flex; gap: 10px; margin-bottom: 10px; font-size: 12px; color: #888; line-height: 1.5; }
+  .tip-item .tip-icon { flex-shrink: 0; }
+
+  .bottom-safe { height: 80px; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .city-view.active { animation: fadeUp 0.3s ease; }
+  .day-content.active { animation: fadeUp 0.25s ease; }
+
+  @media (min-width: 500px) {
+    body { background: #050505; padding: 20px 0; }
+    .phone-shell { border-radius: 40px; border: 1px solid #222; min-height: auto; box-shadow: 0 30px 80px rgba(0,0,0,0.8); }
+  }
+</style>
+</head>
+<body>
+<div class="phone-shell" id="app">
+
+  <div class="city-nav">
+    <div class="trip-header">
+      <div class="trip-title">✈️ Douglas & Caroline</div>
+      <div class="trip-subtitle">Europa · Maio 2026 · 18 dias</div>
+    </div>
+    <div class="city-tabs">
+      <button class="city-tab" onclick="switchCity('lisboa')"    id="tab-lisboa">🇵🇹 Lisboa I</button>
+      <button class="city-tab" onclick="switchCity('madri')"     id="tab-madri">🇪🇸 Madrid</button>
+      <button class="city-tab" onclick="switchCity('paris')"     id="tab-paris">🇫🇷 Paris</button>
+      <button class="city-tab" onclick="switchCity('barcelona')" id="tab-barcelona">🏖️ Barcelona</button>
+      <button class="city-tab" onclick="switchCity('lisboa2')"   id="tab-lisboa2">🇵🇹 Lisboa II</button>
+    </div>
+  </div>
+
+<!-- ═══════════════════════ LISBOA I ═══════════════════════ -->
+<div class="city-view" id="view-lisboa">
+  <div class="city-hero hero-lisboa">
+    <div class="hero-emoji">🇵🇹</div>
+    <div class="hero-city-name">Lisboa</div>
+    <div class="hero-dates">05 mai (ter) · 18h → 08 mai (sex) · 06h</div>
+    <div class="hero-tags">
+      <span class="hero-tag tag-lisboa">🍷 Gastronomia</span>
+      <span class="hero-tag tag-lisboa">🏃 Corrida</span>
+      <span class="hero-tag tag-lisboa">🛍️ Compras</span>
+      <span class="hero-tag tag-lisboa">🏰 Cultura</span>
+    </div>
+    <div class="hero-budget">
+      <span class="hero-budget-label">Orçamento alimentação / casal</span>
+      <span class="hero-budget-val bv-lisboa">~€80–100 / dia</span>
+    </div>
+  </div>
+  <div class="day-selector" id="days-lisboa"></div>
+  <div class="timeline" id="timeline-lisboa">
+
+    <!-- Lisboa Dia 1 · 05 mai (ter) -->
+    <div class="day-content" id="lisboa-day-0">
+      <div class="day-title-bar"><h3>Chegada + Primeira Noite</h3><span>05 mai · ter</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>18h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">✈️ Chegada</div>
+          <div class="act-name">Aeroporto Humberto Delgado</div>
+          <div class="act-desc">Pegue Uber ou Bolt até o hotel — mais prático com malas.</div>
+          <div class="act-meta">
+            <span class="meta-chip cost">💶 €8–12 casal</span>
+            <span class="meta-chip transport">🚗 ~25 min</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>18h30</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🏨 Check-in</div>
+          <div class="act-name">Hotel · Rua Rodrigo da Fonseca, 60</div>
+          <div class="act-desc">Deixe as bagagens, refresque-se e aproveite a localização privilegiada na Av. da Liberdade.</div>
+          <div class="act-meta"><span class="meta-chip tip">💡 Peça mapa do bairro na recepção</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>19h30</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🍽️ Jantar de Chegada</div>
+          <div class="act-name">Taberna da Rua das Flores</div>
+          <div class="act-desc">Petiscos criativos numa antiga mercearia do Chiado. À noite vira laboratório de tapas portuguesas modernas. Ambiente íntimo e autêntico — perfeito para a chegada.</div>
+          <div class="act-meta">
+            <span class="meta-chip cost">💶 €30–40 casal</span>
+            <span class="meta-chip tip">💡 Não aceita reservas — chegue antes das 19h30</span>
+            <span class="meta-chip transport">🚶 10 min do hotel</span>
+          </div>
+          <div class="alt-box">
+            <div class="alt-title">🔀 Alternativas para o jantar de chegada</div>
+            <div class="alt-item"><strong>A Cevicheria</strong> — Chef Kiko Martins, ceviches criativos e tapas. Rua D. Pedro V, 29. Sem reservas. (~€35)</div>
+            <div class="alt-item"><strong>Tapisco</strong> — Fusão tapas/petiscos, não fecha entre almoço e jantar. Rua D. Pedro V, 81. (~€35)</div>
+            <div class="alt-item"><strong>Bifanas na tasca</strong> — Para uma noite leve, qualquer tasca local serve bifanas e caldo verde por €15–20</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lisboa Dia 2 · 06 mai (qua) -->
+    <div class="day-content" id="lisboa-day-1">
+      <div class="day-title-bar"><h3>Belém + LX Factory</h3><span>06 mai · qua</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>07h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🏃 Corrida</div>
+          <div class="act-name">Parque Eduardo VII</div>
+          <div class="act-desc">5–7 km com vista panorâmica de Lisboa ao amanhecer. Uma das melhores vistas da cidade antes do movimento.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span><span class="meta-chip transport">🚶 5 min do hotel</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>08h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">☕ Café da manhã</div>
+          <div class="act-name">Manteigaria · Praça Luís de Camões</div>
+          <div class="act-desc">Pastéis de nata recém-saídos do forno, fresquinhos e mornos. Não é Belém, mas a qualidade é excepcional e fica a 2 min do Chiado.</div>
+          <div class="act-meta">
+            <span class="meta-chip cost">💶 €8–12 casal</span>
+            <span class="meta-chip tip">💡 Peça com canela e açúcar, como os portugueses</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>09h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🚇 Transporte</div>
+          <div class="act-name">Metrô + Bonde 15E → Belém</div>
+          <div class="act-desc">Pegue o metrô até Cais do Sodré e o histórico Eléctrico 15E até Belém. A viagem à beira do Rio Tejo já é parte do passeio.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €10 casal ida/volta</span><span class="meta-chip transport">🚋 ~40 min</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>09h45</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🏛️ Cultura</div>
+          <div class="act-name">Mosteiro dos Jerónimos</div>
+          <div class="act-desc">Obra-prima Manuelina, Patrimônio da UNESCO. Gratuito até 10h — chegue cedo e aproveite sem custo e sem fila.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis até 10h (€10 depois)</span><span class="meta-chip tip">💡 Não perca o claustro superior</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>10h30</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">☕ Obrigatório</div>
+          <div class="act-name">Pastéis de Belém · A Original desde 1837</div>
+          <div class="act-desc">A receita original do pastel de nata, guardada a sete chaves desde 1837. Sirva-se na calçada com vista para o mosteiro — experiência única.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€6 casal</span><span class="meta-chip tip">💡 Coma fresquinhos, na hora. É diferente!</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>11h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🏰 Opcional</div>
+          <div class="act-name">Torre de Belém</div>
+          <div class="act-desc">Ícone manuelino à beira do Tejo. As fotos externas já valem muito — a entrada pode ser poupada para outras atrações.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €16 casal (opcional)</span><span class="meta-chip tip">💡 Fotos do exterior já são espetaculares</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>11h45</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🎨 Arte</div>
+          <div class="act-name">Museu Berardo</div>
+          <div class="act-desc">Arte moderna e contemporânea de nível mundial: Picasso, Warhol, Duchamp — e completamente gratuito.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>13h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🍽️ Almoço</div>
+          <div class="act-name">O Prego da Peça</div>
+          <div class="act-desc">Steakhouse informal famoso pelo prego no pão artesanal. Local, autêntico, cheio de madrugadores e turistas espertos.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €20–28 casal</span><span class="meta-chip tip">💡 Peça o prego com queijo da ilha</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>14h30</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🛍️ Passeio</div>
+          <div class="act-name">LX Factory</div>
+          <div class="act-desc">Complexo criativo numa antiga fábrica têxtil. Livraria Ler Devagar (uma das mais belas do mundo), ateliês, cafés e marcas independentes portuguesas.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Entrada grátis</span><span class="meta-chip tip">💡 Às quartas menos turistas, mais autêntico</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>18h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🍔 Jantar</div>
+          <div class="act-name">LX Burger (no LX Factory)</div>
+          <div class="act-desc">Hambúrgueres artesanais com ingredientes portugueses no coração do complexo criativo. Ambiente descolado e boa cerveja artesanal.</div>
+          <div class="act-meta">
+            <span class="meta-chip cost">💶 €24–30 casal</span>
+            <span class="meta-chip tip">💡 Alternativa: Sea Me (R. do Loreto, 21) para frutos do mar ~€40</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lisboa Dia 3 · 07 mai (qui) -->
+    <div class="day-content" id="lisboa-day-2">
+      <div class="day-title-bar"><h3>Centro + Alfama</h3><span>07 mai · qui</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>07h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🏃 Corrida</div>
+          <div class="act-name">Parque Eduardo VII</div>
+          <div class="act-desc">Rotina matinal com panorama da cidade. A corrida ao amanhecer com o sol nascendo sobre Lisboa é recompensadora.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>08h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">☕ Café da manhã</div>
+          <div class="act-name">Café A Brasileira · Chiado</div>
+          <div class="act-desc">O café mais famoso de Lisboa, aberto desde 1905 — Fernando Pessoa tomava café aqui. A estátua dele está na calçada. Croissant + galão é o clássico.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €12–16 casal</span><span class="meta-chip tip">💡 Foto com a estátua do Pessoa é obrigatória!</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>09h30</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🚶 Passeio</div>
+          <div class="act-name">Av. da Liberdade → Rossio</div>
+          <div class="act-desc">Caminhada pela avenida mais elegante de Lisboa. Vitrines de marcas premium, jardins e arquitetura pombalina.</div>
+          <div class="act-meta"><span class="meta-chip transport">🚇 Metrô de volta €3 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>10h15</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🏛️ Atração</div>
+          <div class="act-name">Elevador de Santa Justa</div>
+          <div class="act-desc">Elevador neo-gótico de 1902 com vista do Chiado e castelo. Alternativa: suba a pé pela rua lateral e desça pelo elevador.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €10 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>11h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🛍️ Compras</div>
+          <div class="act-name">Chiado · Rua do Carmo & Garrett</div>
+          <div class="act-desc">Bairro charmoso com Zara, H&M, Pull & Bear e lojas portuguesas. Passe também na Livraria Bertrand, a mais antiga do mundo em funcionamento (1732).</div>
+          <div class="act-meta"><span class="meta-chip tip">💡 Bertrand é Patrimônio da Humanidade pela UNESCO</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>13h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🍽️ Almoço</div>
+          <div class="act-name">Palácio Chiado · Rua do Alecrim, 70</div>
+          <div class="act-desc">Conceito gastronômico único: 4 restaurantes diferentes num palácio histórico. Você pede na banca, paga e leva para uma mesa compartilhada. Ótima variedade, preço justo.</div>
+          <div class="act-meta">
+            <span class="meta-chip cost">💶 €28–36 casal</span>
+            <span class="meta-chip tip">💡 Alternativa: Café Nicola no Rossio (~€26)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>14h30</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">⛪ Cultura</div>
+          <div class="act-name">Sé de Lisboa</div>
+          <div class="act-desc">A catedral mais antiga de Lisboa, do século XII. Claustro com arqueologia romana visível é fascinante.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€5 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>15h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🏰 Destaque do Dia</div>
+          <div class="act-name">Alfama + Castelo de São Jorge</div>
+          <div class="act-desc">O bairro mais antigo de Lisboa com ruas medievais e ladeiras. O Castelo oferece vista 360° imperdível. Explore sem pressa — Alfama se revela devagar.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €30 casal (castelo)</span><span class="meta-chip tip">💡 Ouça fado num bar da Alfama à tarde — experiência autêntica</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>18h30</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🛍️ Compras</div>
+          <div class="act-name">Av. da Liberdade · Zara / Mango</div>
+          <div class="act-desc">Última sessão de compras antes da saída amanhã cedo. Aproveite os preços europeus.</div>
+          <div class="act-meta"><span class="meta-chip tip">💡 Guarde espaço na mala para Madri e Barcelona!</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>20h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🍽️ Jantar</div>
+          <div class="act-name">Pinóquio Rossio</div>
+          <div class="act-desc">Restaurante tradicional no coração do Rossio desde 1977, especialidade em marisco e peixe fresco. Vista animada da praça histórica.</div>
+          <div class="act-meta">
+            <span class="meta-chip cost">💶 €32–40 casal</span>
+            <span class="meta-chip tip">💡 Alternativa especial: Tasca do Chico (Bairro Alto) — fado ao vivo + petiscos (~€45)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lisboa Dia 4 · 08 mai (sex) -->
+    <div class="day-content" id="lisboa-day-3">
+      <div class="day-title-bar"><h3>Partida para Madrid</h3><span>08 mai · sex</span></div>
+      <div class="activity">
+        <div class="act-time"><span>05h30</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">✈️ Partida</div>
+          <div class="act-name">Aeroporto · Uber recomendado</div>
+          <div class="act-desc">Saída muito cedo. Uber garante horário com malas. Chegue 2h antes do voo das 06h.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €7–12 casal</span><span class="meta-chip transport">🚗 ~25 min sem trânsito</span></div>
+        </div>
+      </div>
+      <div class="activity">
+        <div class="act-time"><span>06h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">✈️ Voo</div>
+          <div class="act-name">Lisboa → Madrid</div>
+          <div class="act-desc">~1h15 de voo. Chegada às 9h em Madrid — um dia cheio pela frente!</div>
+          <div class="act-meta"><span class="meta-chip tip">💡 Durma no avião, chega cansado mas vale</span></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /timeline-lisboa -->
+
+  <div class="budget-card">
+    <div class="budget-header">💶 Estimativa · Lisboa I</div>
+    <div class="budget-row"><span class="budget-label">Alimentação (3 dias)</span><span class="budget-amount ba-lisboa">€240–300</span></div>
+    <div class="budget-row"><span class="budget-label">Transporte local</span><span class="budget-amount ba-lisboa">~€40</span></div>
+    <div class="budget-row"><span class="budget-label">Atrações / Ingressos</span><span class="budget-amount ba-lisboa">~€60–80</span></div>
+    <div class="budget-total"><span class="budget-total-label">Total estimado</span><span class="budget-total-amount">€340–420</span></div>
+  </div>
+  <div class="tips-box">
+    <div class="tips-title">💡 Dicas Essenciais · Lisboa</div>
+    <div class="tip-item"><span class="tip-icon">📱</span><span>Bolt é mais barato que Uber em Lisboa — baixe antes de embarcar</span></div>
+    <div class="tip-item"><span class="tip-icon">💳</span><span>Conta Wise ou Nomad: zero IOF, câmbio real. Essencial em toda a viagem</span></div>
+    <div class="tip-item"><span class="tip-icon">👟</span><span>Tênis confortáveis obrigatórios — Lisboa tem muito paralelepípedo!</span></div>
+    <div class="tip-item"><span class="tip-icon">🍷</span><span>Vinho da casa (€2–3/copo) é excelente nos restaurantes locais</span></div>
+    <div class="tip-item"><span class="tip-icon">🌡️</span><span>Maio: 18–23°C — uma camada leve para as noites</span></div>
+  </div>
+</div><!-- /view-lisboa -->
+
+<!-- ═══════════════════════ MADRID ═══════════════════════ -->
+<div class="city-view" id="view-madri">
+  <div class="city-hero hero-madri">
+    <div class="hero-emoji">🇪🇸</div>
+    <div class="hero-city-name">Madrid</div>
+    <div class="hero-dates">08 mai (sex) · 09h → 12 mai (ter) · 20h</div>
+    <div class="hero-tags">
+      <span class="hero-tag tag-madri">⚽ Futebol</span>
+      <span class="hero-tag tag-madri">🥘 Tapas</span>
+      <span class="hero-tag tag-madri">🏛️ Museus</span>
+      <span class="hero-tag tag-madri">🛍️ Compras</span>
+    </div>
+    <div class="hero-budget">
+      <span class="hero-budget-label">Orçamento alimentação / casal</span>
+      <span class="hero-budget-val bv-madri">~€80–100 / dia</span>
+    </div>
+  </div>
+  <div class="day-selector" id="days-madri"></div>
+  <div class="timeline" id="timeline-madri">
+
+    <!-- Madrid Dia 1 · 08 mai (sex) -->
+    <div class="day-content" id="madri-day-0">
+      <div class="day-title-bar"><h3>Chegada + Centro Histórico</h3><span>08 mai · sex</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>09h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">✈️ Chegada</div>
+          <div class="act-name">Barajas → Centro · Bus Exprés</div>
+          <div class="act-desc">Bus Exprés do aeroporto até Atocha. Direto, econômico e sem trânsito.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€5/pessoa</span><span class="meta-chip transport">🚌 ~40 min</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>10h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🏨 Check-in</div>
+          <div class="act-name">Hospedagem · Calle Julián Gayarre, 8</div>
+          <div class="act-desc">Localização excelente próxima ao Retiro. Deixe as malas — sem corrida hoje, direto para explorar a cidade.</div>
+          <div class="act-meta"><span class="meta-chip tip">💡 Peça check-in antecipado ou guarda-malas</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>10h30</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">☕ Café da manhã tardio</div>
+          <div class="act-name">Café Comercial ou Café Gijón</div>
+          <div class="act-desc">Dois cafés históricos de Madrid onde escritores e intelectuais se reuniam. O Gijón existe desde 1888 no Paseo de Recoletos. Croissant, café com leite e jornal local — ambiente 100% madrilenho.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €12–16 casal</span><span class="meta-chip tip">💡 Peça um "cortado" — espresso com um toque de leite</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>12h30</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🍽️ Almoço</div>
+          <div class="act-name">Mercado de Antón Martín</div>
+          <div class="act-desc">Mercado gastronômico autêntico e local — muito menos turístico que o San Miguel. Jamón ibérico, frutos do mar frescos e vermute gelado. Custo-benefício excelente.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €25–35 casal</span><span class="meta-chip tip">💡 Em dia de semana: "menú del día" completo por €12–15/pessoa</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>14h30</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🏛️ Cultura</div>
+          <div class="act-name">Plaza Mayor + Mercado de San Miguel</div>
+          <div class="act-desc">A grande praça barroca do século XVII. No San Miguel, tapas e vinhos em ambiente elegante. Peça o bocadillo de calamares — clássico madrilenho!</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Tapas: €15–25 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>16h30</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🏰 Atração</div>
+          <div class="act-name">Palácio Real de Madrid</div>
+          <div class="act-desc">O maior palácio real da Europa Ocidental. Salas ricamente decoradas, armaria e Jardins de Sabatini. Às sextas há troca de guarda (12h, mas amanhã é sábado também).</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €14/pessoa</span><span class="meta-chip tip">💡 Compre ingresso online: patrimonionacional.es</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>18h30</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🌅 Pôr do Sol</div>
+          <div class="act-name">Templo de Debod</div>
+          <div class="act-desc">Templo egípcio de 2.200 anos com pôr do sol espetacular sobre Madrid. Um dos cenários mais surpreendentes da cidade — e gratuito.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>20h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🍫 Clássico</div>
+          <div class="act-name">Churros · San Ginés</div>
+          <div class="act-desc">A Chocolatería San Ginés existe desde 1894 e serve 24h. Os churros mais famosos de Madrid com chocolate espesso.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€12 casal</span><span class="meta-chip tip">💡 2 min da Plaza Mayor, Pasadizo de San Ginés, 5</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>21h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🍽️ Jantar</div>
+          <div class="act-name">La Musa · Malasaña</div>
+          <div class="act-desc">Bar de tapas moderno no bairro mais alternativo de Madrid. Petiscos criativos com toques internacionais, vinho e cerveja artesanal. Ambiente jovem e animado numa sexta à noite.</div>
+          <div class="act-meta">
+            <span class="meta-chip cost">💶 €30–40 casal</span>
+            <span class="meta-chip tip">💡 Calle de Manuela Malasaña, 18</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Madrid Dia 2 · 09 mai (sáb) -->
+    <div class="day-content" id="madri-day-1">
+      <div class="day-title-bar"><h3>Toledo + Flamenco</h3><span>09 mai · sáb</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>07h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🏃 Corrida</div>
+          <div class="act-name">Parque del Retiro</div>
+          <div class="act-desc">Um dos parques mais belos da Europa. 5km pelo lago e jardins. Sábado cedo o parque é dos locais.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span><span class="meta-chip transport">🚶 10 min do hotel</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>08h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">☕ Café da manhã</div>
+          <div class="act-name">Tostada con Tomate + Café · Bar local</div>
+          <div class="act-desc">O café da manhã madrilenho: tostada com tomate ralado e azeite, ou bocadillo de jamón. Qualquer bar próximo ao Retiro serve isso por preço justo.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €8–12 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>08h40</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🚄 Excursão</div>
+          <div class="act-name">Trem Atocha → Toledo</div>
+          <div class="act-desc">AVE em 30 min até a cidade medieval da UNESCO. Compre bilhete antecipado — sábado pode lotar.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €20–30 casal ida/volta</span><span class="meta-chip transport">🚄 30 min · Renfe.com</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>09h30</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🏰 Destaque do Dia</div>
+          <div class="act-name">Toledo · Catedral + Alcázar + Bairro Judeu</div>
+          <div class="act-desc">Cidade das três culturas. Catedral gótica monumental, Alcázar com vista 360° e o charme do bairro judeu medieval. Explore as ruelas sem mapa.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Catedral €12/pessoa</span><span class="meta-chip tip">💡 Alcázar vale mais pela vista do que pelo museu interno</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>13h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🍽️ Almoço</div>
+          <div class="act-name">Cocido Manchego em Toledo</div>
+          <div class="act-desc">O prato regional da Castela: cozido generoso com grão-de-bico, chouriço, carne e legumes. Reconfortante e autêntico.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €25–35 casal</span><span class="meta-chip tip">💡 Restaurante Adolfo Toledo — um dos melhores da cidade</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>16h30</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🚄 Retorno</div>
+          <div class="act-name">Toledo → Madrid</div>
+          <div class="act-desc">De volta à capital para a noite de flamenco. Descanse brevemente antes do espetáculo.</div>
+          <div class="act-meta"><span class="meta-chip transport">🚄 30 min</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>20h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🍽️ Jantar rápido pré-show</div>
+          <div class="act-name">Tapas em La Latina</div>
+          <div class="act-desc">Bairro La Latina com as melhores tascas tradicionais de Madrid. Ideal para uma refeição rápida antes do flamenco. Tente o Taberna El Sur ou Almendro 13.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €25–30 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>21h30</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">💃 Noite Especial</div>
+          <div class="act-name">Flamenco · Corral de la Morería</div>
+          <div class="act-desc">O tablao mais prestigiado de Madrid. Dançarinos, cantores e guitarristas de alto nível. Reserve com semanas de antecedência — esgota rapidamente.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €50–100/pessoa (show + bebida)</span><span class="meta-chip tip">💡 Reserve em moreria.com — sessão das 21h30 recomendada</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Madrid Dia 3 · 10 mai (dom) -->
+    <div class="day-content" id="madri-day-2">
+      <div class="day-title-bar"><h3>Futebol · Bernabéu + Atlético</h3><span>10 mai · dom</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>07h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🏃 Corrida</div>
+          <div class="act-name">Parque del Retiro</div>
+          <div class="act-desc">Domingo no Retiro é muito animado — famílias, ciclistas, músicos. Aproveite o lago e os jardins antes de um dia futebolístico.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>08h15</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">☕ Café da manhã</div>
+          <div class="act-name">Brunch de domingo · Malasaña ou Chueca</div>
+          <div class="act-desc">Domingo é dia de brunch em Madrid! Bairros de Malasaña e Chueca têm ótimas opções com ovos, zumos e pão tostado. Experimente o Bendita Locura Coffee.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €16–22 casal</span><span class="meta-chip tip">💡 Mais completo que o café da semana — aproveite!</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>09h30</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">⚽ Tour</div>
+          <div class="act-name">Estádio Santiago Bernabéu</div>
+          <div class="act-desc">Tour completo: campo, vestiários, sala de troféus e museu do Real Madrid. Para qualquer amante de futebol, é um templo.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€30/pessoa</span><span class="meta-chip tip">💡 Reserve em realmadrid.com com antecedência</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>12h30</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🍽️ Almoço</div>
+          <div class="act-name">Paella · La Barraca</div>
+          <div class="act-desc">O endereço mais tradicional de Madrid para paella: arroz mixto com frutos do mar, porco e frango. O "socarrat" (fundo queimadinho) é o segredo.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €35–45 casal</span><span class="meta-chip tip">💡 Calle de la Reina, 29 — reserva recomendada</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>14h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">⚽ Jogo</div>
+          <div class="act-name">Atlético de Madrid · Cívitas Metropolitano</div>
+          <div class="act-desc">Chegue 1h antes para absorver a atmosfera. Um dos estádios mais modernos e impressionantes da Europa. O Cholo Simeone é lenda viva!</div>
+          <div class="act-meta">
+            <span class="meta-chip cost">💶 Ingresso variável — compre em atleticodemadrid.com</span>
+            <span class="meta-chip transport">🚇 Metrô Estadio Cívitas Metropolitano (L7)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>19h30</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🍽️ Jantar pós-jogo</div>
+          <div class="act-name">La Paella de Madrid</div>
+          <div class="act-desc">Restaurante tradicional para encerrar o dia futebolístico com uma paella de qualidade. Ambiente espanhol raiz.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €30–40 casal</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Madrid Dia 4 · 11 mai (seg) -->
+    <div class="day-content" id="madri-day-3">
+      <div class="day-title-bar"><h3>Prado + Gran Vía + Compras</h3><span>11 mai · seg</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>07h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🏃 Corrida</div>
+          <div class="act-name">Parque del Retiro</div>
+          <div class="act-desc">Segunda-feira cedo o parque é dos corredores regulares. Rotina saudável antes de um dia cultural e de compras.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>08h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">☕ Café da manhã</div>
+          <div class="act-name">Tostadas + Zumo · Bar do Retiro</div>
+          <div class="act-desc">Café da manhã simples e genuíno nos bares ao redor do Retiro. Os locais tomam café aqui todo dia. Tostada com tomate e zumo de naranja natural.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €8–10 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>09h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🎨 Cultura</div>
+          <div class="act-name">Museu do Prado</div>
+          <div class="act-desc">Um dos maiores museus do mundo: Velázquez, Goya, El Greco, Rubens. Foque nas salas 12 (Velázquez) e 64–67 (Goya negro). Ninguém vê tudo em um dia — escolha prioridades.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €15/pessoa (grátis 18h–20h)</span><span class="meta-chip tip">💡 Chegue cedo (9h) para evitar multidão</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>12h30</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🍽️ Almoço</div>
+          <div class="act-name">Mercado de la Reina</div>
+          <div class="act-desc">Bar-restaurante junto à Gran Vía com pintxos, jamón e croquetas. Ótimo para almoço rápido e variado antes de atacar as compras.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €25–35 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>14h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🛍️ Compras</div>
+          <div class="act-name">Gran Vía · Zara, Primark, Mango + El Corte Inglés</div>
+          <div class="act-desc">A Broadway de Madrid. Flagship da Zara, Primark gigante, Mango e o magnífico El Corte Inglés Gourmet na Calle Goya com os melhores produtos espanhóis.</div>
+          <div class="act-meta"><span class="meta-chip tip">💡 El Corte Inglés Gourmet: jamón Ibérico e vinhos de presente perfeitos</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>18h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🍸 Vermute</div>
+          <div class="act-name">Hora del Vermut · Bairro de Las Letras</div>
+          <div class="act-desc">Ritual espanhol entre 18–21h: vermute gelado com gelo e rodela de laranja, azeitonas e boquerones. O bairro de Las Letras (perto da Puerta del Sol) é perfeito para isso.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €10–15 casal</span><span class="meta-chip tip">💡 É a "hora sagrada" antes do jantar em Madrid</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>21h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🍽️ Jantar</div>
+          <div class="act-name">Casa Labra · Tortilla de Bacalhau</div>
+          <div class="act-desc">Taberna histórica de 1860 famosa pela tortilla de bacalhau. Ambiente genuíno de tasca madrilenha centenária. Preços justos e qualidade garantida.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €25–35 casal</span><span class="meta-chip tip">💡 Peça a tortilla de bacalao — é a especialidade da casa desde 1860</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Madrid Dia 5 · 12 mai (ter) -->
+    <div class="day-content" id="madri-day-4">
+      <div class="day-title-bar"><h3>Despedida + Partida</h3><span>12 mai · ter</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>07h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🏃 Corrida + 🚣 Barco</div>
+          <div class="act-name">Retiro · Barco no Lago</div>
+          <div class="act-desc">Última manhã em Madrid. Aluguem um barco no lago do Retiro — atividade especial e descontraída para o casal despedir-se da cidade.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€6/barco (45 min)</span><span class="meta-chip tip">💡 Barcos a partir das 10h</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>09h30</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">☕ Café da manhã</div>
+          <div class="act-name">Café y Tostadas · Mercado de San Ildefonso</div>
+          <div class="act-desc">Mercado gastronômico em Malasaña com ambiente descontraído e boa oferta de café da manhã tardio. Churros, croissants e zumos.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €12–16 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>11h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🏛️ Arte</div>
+          <div class="act-name">Museu Reina Sofía</div>
+          <div class="act-desc">Guernica de Picasso fica aqui — uma das obras mais importantes do século XX. Gratuito às terças das 19h–21h, mas se tiver tempo pela manhã vale o ingresso completo.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €12/pessoa (grátis ter 19–21h, mas você sai às 17h)</span><span class="meta-chip tip">💡 A sala do Guernica para e faz pensar — reserve tempo</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>13h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">🍽️ Almoço de Despedida</div>
+          <div class="act-name">Cocido Madrileño · Lhardy</div>
+          <div class="act-desc">O prato mais tradicional de Madrid no restaurante mais tradicional da cidade, aberto desde 1839. Uma despedida à altura da capital espanhola!</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €50–70 casal</span><span class="meta-chip tip">💡 Reserve em lhardy.com — Carrera de San Jerónimo, 8</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>17h00</span></div>
+        <div class="act-dot"><div class="dot dot-madri"></div></div>
+        <div class="act-card">
+          <div class="act-type type-madri">✈️ Partida</div>
+          <div class="act-name">Bus Exprés Atocha → Aeroporto</div>
+          <div class="act-desc">Voo às 20h — saída às 17h garante conforto para check-in e segurança.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€5/pessoa</span><span class="meta-chip transport">🚌 ~40 min</span></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /timeline-madri -->
+
+  <div class="budget-card">
+    <div class="budget-header">💶 Estimativa · Madrid</div>
+    <div class="budget-row"><span class="budget-label">Alimentação (4 dias completos)</span><span class="budget-amount ba-madri">€350–450</span></div>
+    <div class="budget-row"><span class="budget-label">Toledo (trem + ingressos)</span><span class="budget-amount ba-madri">~€80</span></div>
+    <div class="budget-row"><span class="budget-label">Flamenco · Corral de la Morería</span><span class="budget-amount ba-madri">€100–200</span></div>
+    <div class="budget-row"><span class="budget-label">Futebol + Bernabéu</span><span class="budget-amount ba-madri">~€100</span></div>
+    <div class="budget-total"><span class="budget-total-label">Total estimado</span><span class="budget-total-amount">€630–830</span></div>
+  </div>
+  <div class="tips-box">
+    <div class="tips-title">💡 Dicas Essenciais · Madrid</div>
+    <div class="tip-item"><span class="tip-icon">⏰</span><span>Madrid janta tarde! Restaurantes abrem às 21h — chegue às 20h30</span></div>
+    <div class="tip-item"><span class="tip-icon">🚇</span><span>Metro de Madrid é excelente. Bilhete de 10 viagens (€12,20) compensa</span></div>
+    <div class="tip-item"><span class="tip-icon">🍺</span><span>"Caña" (chope pequeno) com tapas grátis em Lavapiés e La Latina</span></div>
+    <div class="tip-item"><span class="tip-icon">🌡️</span><span>Maio: 16–24°C — dias quentes, noites frescas. Leve jaqueta leve</span></div>
+    <div class="tip-item"><span class="tip-icon">🥩</span><span>Jamón Ibérico de Bellota: compre no El Corte Inglés Gourmet como presente</span></div>
+  </div>
+</div><!-- /view-madri -->
+
+<!-- ═══════════════════════ PARIS ═══════════════════════ -->
+<div class="city-view" id="view-paris">
+  <div class="city-hero hero-paris">
+    <div class="hero-emoji">🇫🇷</div>
+    <div class="hero-city-name">Paris</div>
+    <div class="hero-dates">12 mai (ter) · 22h → 17 mai (dom) · 07h</div>
+    <div class="hero-tags">
+      <span class="hero-tag tag-paris">🗼 Monumentos</span>
+      <span class="hero-tag tag-paris">🏰 Versalhes</span>
+      <span class="hero-tag tag-paris">🎡 Disney</span>
+      <span class="hero-tag tag-paris">🥐 Gastronomia</span>
+    </div>
+    <div class="hero-budget">
+      <span class="hero-budget-label">Orçamento alimentação / casal</span>
+      <span class="hero-budget-val bv-paris">~€100 / dia</span>
+    </div>
+  </div>
+  <div class="day-selector" id="days-paris"></div>
+  <div class="timeline" id="timeline-paris">
+
+    <!-- Paris Dia 1 · 12 mai (ter) -->
+    <div class="day-content" id="paris-day-0">
+      <div class="day-title-bar"><h3>Chegada Tardia</h3><span>12 mai · ter</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>22h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">✈️ Chegada</div>
+          <div class="act-name">CDG → Paris · RER B</div>
+          <div class="act-desc">RER B até Châtelet-Les Halles. Se estiver lotado ou com muita bagagem, Uber é alternativa (~€50).</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €12/pessoa (RER)</span><span class="meta-chip transport">🚆 ~45 min</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>23h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🏨 Check-in</div>
+          <div class="act-name">68 Rue de Cléry, 75002</div>
+          <div class="act-desc">2ème arrondissement — 5 min de Châtelet. Hub central para toda a cidade.</div>
+          <div class="act-meta"><span class="meta-chip tip">💡 Baixe Citymapper antes de sair do Brasil</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>23h15</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🍽️ Jantar tardio</div>
+          <div class="act-name">Chez Denise · Rue Montorgueil</div>
+          <div class="act-desc">Bistrô parisiense clássico com abertura tardia — perfeito para chegadas noturnas. Escargot, confit de canard e vinho da casa.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€50 casal</span><span class="meta-chip tip">💡 Peça o escargot au beurre persillé!</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paris Dia 2 · 13 mai (qua) -->
+    <div class="day-content" id="paris-day-1">
+      <div class="day-title-bar"><h3>Torre Eiffel + Cruzeiro + Ópera</h3><span>13 mai · qua</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>07h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🏃 Corrida</div>
+          <div class="act-name">Canal Saint-Martin</div>
+          <div class="act-desc">O canal mais fotogênico de Paris ao amanhecer. Pontes de ferro, reflexos na água e a cidade ainda sonolenta. Paris real e bela.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>08h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">☕ Café da manhã</div>
+          <div class="act-name">Stohrer · 51 Rue Montorgueil</div>
+          <div class="act-desc">A confeitaria mais antiga de Paris, fundada em 1730. Croissants e puits d'amour num ambiente histórico incrível. A Rue Montorgueil em si é deliciosa para passear.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€12 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>09h30</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🗼 Ícone</div>
+          <div class="act-name">Torre Eiffel · Subida ao Summit</div>
+          <div class="act-desc">Chegue cedo para evitar filas mesmo com ingresso. Vista 360° de toda Paris. Reserve com semanas de antecedência — esgota muito rápido.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €30/pessoa (summit)</span><span class="meta-chip tip">💡 Reserve AGORA em toureiffel.paris — esgota meses antes</span><span class="meta-chip transport">🚆 RER C · 20 min</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>11h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">📸 Foto</div>
+          <div class="act-name">Trocadéro</div>
+          <div class="act-desc">A foto clássica da Torre Eiffel frontal. Praça monumental com vista perfeita para o casal.</div>
+          <div class="act-meta"><span class="meta-chip transport">🚇 Linha 6 · 5 min</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>12h30</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🍽️ Almoço</div>
+          <div class="act-name">L'Escargot Montorgueil</div>
+          <div class="act-desc">Restaurante histórico (1875) com escargot como especialidade. Almoço clássico parisiense antes do cruzeiro.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€30 casal</span><span class="meta-chip tip">💡 Alternativa econômica: baguete + queijo do Monoprix (~€10)</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>14h30</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">⛵ Passeio</div>
+          <div class="act-name">Cruzeiro Sena · Bateaux Parisiens</div>
+          <div class="act-desc">1h navegando pelo coração de Paris: Notre-Dame (reconstruída!), Louvre, Musée d'Orsay e as pontes históricas vistas do rio.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €18/pessoa</span><span class="meta-chip tip">💡 Saída do Pont de l'Alma — boa reputação</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>16h30</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🧀 Piquenique</div>
+          <div class="act-name">Champ de Mars · Pôr do Sol</div>
+          <div class="act-desc">O piquenique parisiense! Queijos, vinhos, baguete e frutas no jardim frontal à Torre Eiffel vendo o sol se pôr sobre Paris.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€20 casal (compre no Monoprix)</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>19h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🎭 Cultura</div>
+          <div class="act-name">Ópera Garnier</div>
+          <div class="act-desc">Uma das mais belas óperas do mundo. Interior deslumbrante com a cúpula pintada por Chagall. Visita vale muito — reserve ingresso de visita ou espetáculo.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €14/pessoa (visita)</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>20h30</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🛍️ Compras</div>
+          <div class="act-name">Galeries Lafayette</div>
+          <div class="act-desc">O grande magazine parisiense com cúpula art nouveau incrível. Terraço gratuito com vista do Sacré-Cœur.</div>
+          <div class="act-meta"><span class="meta-chip tip">💡 Terraço: uma das melhores vistas gratuitas de Paris</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>21h30</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🥞 Jantar</div>
+          <div class="act-name">Breizh Café · Crêperie</div>
+          <div class="act-desc">O melhor crêperie de Paris com galettes bretonas tradicionais e cidra artesanal. Encerra o dia com leveza e sabor.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€40 casal</span><span class="meta-chip tip">💡 Reserve em breizhcafe.com</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paris Dia 3 · 14 mai (qui) -->
+    <div class="day-content" id="paris-day-2">
+      <div class="day-title-bar"><h3>Disneyland Paris 🎡</h3><span>14 mai · qui</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>07h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🏃 Corrida</div>
+          <div class="act-name">Jardim das Tulherias</div>
+          <div class="act-desc">Corrida leve antes do dia longo na Disney. Um dos jardins mais elegantes de Paris ao amanhecer.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>08h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">☕ Café da manhã</div>
+          <div class="act-name">Paul Boulangerie · qualquer unidade</div>
+          <div class="act-desc">Padaria francesa de qualidade com croissant, pain au chocolat e café. Café da manhã reforçado e rápido antes da Disney.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€14 casal</span><span class="meta-chip tip">💡 Paul tem unidade perto de Châtelet e do RER A</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>09h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🎡 Dia Especial</div>
+          <div class="act-name">Disneyland Paris · Dia Completo</div>
+          <div class="act-desc">Dia completo nos parques! Destaques: Space Mountain (nova fase), Big Thunder Mountain, Star Wars Hyperspace e o novo Avengers Campus. Disney Premier Access ajuda a furar fila nas atrações principais.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€100/pessoa (varia por data)</span><span class="meta-chip transport">🚆 RER A · 40 min de Châtelet</span><span class="meta-chip tip">💡 Compre em disneylandparis.com com antecedência</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>20h30</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🍷 Jantar</div>
+          <div class="act-name">Pain Vin Fromage · ou Bouillon Chartier</div>
+          <div class="act-desc">Após a Disney, opções mais tranquilas: Pain Vin Fromage para tábua de queijos e vinhos (~€35) ou Bouillon Chartier para culinária francesa clássica barata e sem reserva (~€25).</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €25–35 casal</span><span class="meta-chip tip">💡 Chartier: 7 Rue du Fbg Montmartre — aberto 24/7, sem reserva</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paris Dia 4 · 15 mai (sex) -->
+    <div class="day-content" id="paris-day-3">
+      <div class="day-title-bar"><h3>Louvre + Arco + Saint-Chapelle</h3><span>15 mai · sex</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>07h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🏃 Corrida</div>
+          <div class="act-name">Canal Saint-Martin</div>
+          <div class="act-desc">Última corrida pelo canal favorito — sexta de manhã com os parisienses indo trabalhar.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>08h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">☕ Café da manhã</div>
+          <div class="act-name">Au Vieux Paris d'Arcole</div>
+          <div class="act-desc">Café histórico com fachada coberta de flores perto da Notre-Dame em reconstrução. Uma das fotos mais encantadoras de Paris.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€14 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>09h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🖼️ Cultura</div>
+          <div class="act-name">Museu do Louvre</div>
+          <div class="act-desc">O maior museu do mundo — Mona Lisa, Vênus de Milo, Vitória de Samotrácia. Chegue às 9h (abertura) para ver a Mona Lisa sem multidão. Reserve 3h mínimo.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €22/pessoa</span><span class="meta-chip tip">💡 OBRIGATÓRIO reservar em louvre.fr — sem reserva não entra!</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>12h30</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🍽️ Almoço</div>
+          <div class="act-name">La Bourse et La Vie</div>
+          <div class="act-desc">Bistrô franco-americano com entrecôte, fritas e bom vinho. Simples, delicioso e razoável para o padrão parisiense.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€35 casal</span><span class="meta-chip tip">💡 Alternativa rápida: Le Relais de l'Entrecôte — só steak frites, sem reserva (~€30)</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>14h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🏛️ Atração</div>
+          <div class="act-name">Arco do Triunfo</div>
+          <div class="act-desc">Monumento napoleônico com vista espetacular dos Champs-Élysées do alto. Suba para o terraço — um dos panoramas mais icônicos do mundo.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €16/pessoa</span><span class="meta-chip transport">🚇 Linha 1 · 15 min</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>15h30</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🚶 Caminhada clássica</div>
+          <div class="act-name">Champs-Élysées → Pont Alexandre III → Tulherias</div>
+          <div class="act-desc">A caminhada mais cinematográfica de Paris: da avenida mais famosa do mundo até a ponte mais ornamentada, com escultura dourada, terminando nas Tulherias.</div>
+          <div class="act-meta"><span class="meta-chip transport">🚶 ~35 min a pé</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>17h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">⛪ Joia Escondida</div>
+          <div class="act-name">Sainte-Chapelle + Conciergerie</div>
+          <div class="act-desc">Sainte-Chapelle tem os vitrais góticos mais belos do mundo — 15 janelas narrando toda a Bíblia em luz colorida. Menos conhecida que Notre-Dame, muito mais impressionante!</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €28 casal (combo)</span><span class="meta-chip tip">💡 Um dos segredos mais belos de Paris — não pule!</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>19h30</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🍽️ Jantar</div>
+          <div class="act-name">Chez Denise ou Da Rosa · Saint-Germain</div>
+          <div class="act-desc">De volta ao bistrô favorito ou experimente o Da Rosa no Saint-Germain: épicerie-cantina charmosa com jambon, queijos e vinhos de qualidade num ambiente genuinamente parisiense.</div>
+          <div class="act-meta">
+            <span class="meta-chip cost">💶 €35–45 casal</span>
+            <span class="meta-chip tip">💡 Da Rosa: Rue de Seine — não precisa de reserva no almoço</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paris Dia 5 · 16 mai (sáb) -->
+    <div class="day-content" id="paris-day-4">
+      <div class="day-title-bar"><h3>Versalhes + Montmartre + Marais</h3><span>16 mai · sáb</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>07h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🏃 Corrida</div>
+          <div class="act-name">Jardim das Tulherias</div>
+          <div class="act-desc">Sábado de manhã nas Tulherias é mágico — jogadores de pétanque, crianças, corredores e o Louvre ao fundo.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>08h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">☕ Café da manhã</div>
+          <div class="act-name">Stohrer · Rue Montorgueil</div>
+          <div class="act-desc">Última visita à confeitaria histórica antes do dia grandioso. Croissant e café fresco.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€12 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>09h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🏰 Destaque do Dia</div>
+          <div class="act-name">Palácio de Versalhes</div>
+          <div class="act-desc">O maior palácio do mundo! Galeria dos Espelhos, Jardins à francesa e os Trianons. Sábado tem mais turistas — chegue às 9h para entrar antes da multidão.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €20/pessoa + jardins €9</span><span class="meta-chip transport">🚆 RER C · 40 min de Châtelet</span><span class="meta-chip tip">💡 Reserve em chateauversailles.fr — obrigatório</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>12h30</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🍽️ Almoço</div>
+          <div class="act-name">La Petite Venise · Versalhes</div>
+          <div class="act-desc">Restaurante dentro dos jardins de Versalhes (perto do Grand Canal). Almoço com vista dos jardins reais — uma experiência inesquecível no contexto certo.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €30–40 casal</span><span class="meta-chip tip">💡 Alternativa: lanche de boulangerie nos jardins</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>16h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">⛪ Vista</div>
+          <div class="act-name">Sacré-Cœur · Montmartre</div>
+          <div class="act-desc">A cúpula branca no topo da colina com vista panorâmica de toda Paris. Ao pôr do sol é absolutamente mágico. Bairro dos artistas e ateliês.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span><span class="meta-chip transport">🚇 Linha 2 · 20 min</span><span class="meta-chip tip">💡 Anoiteça aqui — Paris iluminada ao longe é inesquecível</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>18h30</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🕌 Bairro</div>
+          <div class="act-name">Le Marais · Place des Vosges + El Born</div>
+          <div class="act-desc">Bairro histórico com a mais bela praça de Paris (Place des Vosges, do século XVII), galerias de arte, boutiques e a atmosfera mais cosmopolita da cidade.</div>
+          <div class="act-meta"><span class="meta-chip transport">🚇 Linha 1 · 20 min</span><span class="meta-chip tip">💡 As du Fallafel (Rue des Rosiers) para um lanche lendário (~€8)</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>21h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">🍷 Jantar · Despedida de Paris</div>
+          <div class="act-name">Pain Vin Fromage</div>
+          <div class="act-desc">Última noite em Paris com a melhor tábua de queijos e vinhos franceses da viagem. Uma celebração ao estilo parisiense.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€40 casal</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paris Dia 6 · 17 mai (dom) -->
+    <div class="day-content" id="paris-day-5">
+      <div class="day-title-bar"><h3>Partida para Barcelona</h3><span>17 mai · dom</span></div>
+      <div class="activity">
+        <div class="act-time"><span>04h45</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">✈️ Partida</div>
+          <div class="act-name">Uber → CDG</div>
+          <div class="act-desc">Saída antecipada. Uber é mais confiável a esta hora. Agende na véspera pelo app.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €60–80 casal</span></div>
+        </div>
+      </div>
+      <div class="activity">
+        <div class="act-time"><span>05h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">☕ Café</div>
+          <div class="act-name">Stohrer · Último croissant parisiense</div>
+          <div class="act-desc">Última parada antes de deixar Paris. Croissant, café e os macarons Ladurée ou Pierre Hermé que ainda cabem na mala.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€12 casal</span></div>
+        </div>
+      </div>
+      <div class="activity">
+        <div class="act-time"><span>07h00</span></div>
+        <div class="act-dot"><div class="dot dot-paris"></div></div>
+        <div class="act-card">
+          <div class="act-type type-paris">✈️ Voo</div>
+          <div class="act-name">Paris → Barcelona</div>
+          <div class="act-desc">~1h40 de voo. Às 9h: Barcelona, o Mediterrâneo e a última grande aventura da viagem!</div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /timeline-paris -->
+
+  <div class="budget-card">
+    <div class="budget-header">💶 Estimativa · Paris</div>
+    <div class="budget-row"><span class="budget-label">Alimentação (5 dias)</span><span class="budget-amount ba-paris">€500</span></div>
+    <div class="budget-row"><span class="budget-label">Ingressos (Torre, Louvre, Versalhes…)</span><span class="budget-amount ba-paris">~€280</span></div>
+    <div class="budget-row"><span class="budget-label">Disneyland Paris</span><span class="budget-amount ba-paris">~€200</span></div>
+    <div class="budget-row"><span class="budget-label">Transporte (RER, metrô, Uber)</span><span class="budget-amount ba-paris">~€100</span></div>
+    <div class="budget-total"><span class="budget-total-label">Total estimado</span><span class="budget-total-amount">€1.080–1.200</span></div>
+  </div>
+  <div class="tips-box">
+    <div class="tips-title">💡 Dicas Essenciais · Paris</div>
+    <div class="tip-item"><span class="tip-icon">📱</span><span><strong>Citymapper</strong> é essencial para navegar o metrô parisiense</span></div>
+    <div class="tip-item"><span class="tip-icon">🎫</span><span>Paris Museum Pass pode economizar nos ingressos múltiplos</span></div>
+    <div class="tip-item"><span class="tip-icon">🥖</span><span>Boulangerie + Monoprix = almoço por €8–12 quando precisar economizar</span></div>
+    <div class="tip-item"><span class="tip-icon">🍷</span><span>Gorjeta não obrigatória — 1–3€ em cafés, 5–10% em restaurantes é bem-vindo</span></div>
+    <div class="tip-item"><span class="tip-icon">🌡️</span><span>Maio: 12–22°C — dias ensolarados, leve casaco para manhãs e noites</span></div>
+  </div>
+</div><!-- /view-paris -->
+
+<!-- ═══════════════════════ BARCELONA ═══════════════════════ -->
+<div class="city-view" id="view-barcelona">
+  <div class="city-hero hero-barcelona">
+    <div class="hero-emoji">🏖️</div>
+    <div class="hero-city-name">Barcelona</div>
+    <div class="hero-dates">17 mai (dom) · 09h → 22 mai (sex) · 07h</div>
+    <div class="hero-tags">
+      <span class="hero-tag tag-barcelona">⚽ Camp Nou</span>
+      <span class="hero-tag tag-barcelona">🏛️ Gaudí</span>
+      <span class="hero-tag tag-barcelona">🏖️ Praia</span>
+      <span class="hero-tag tag-barcelona">🥘 Tapas</span>
+    </div>
+    <div class="hero-budget">
+      <span class="hero-budget-label">Orçamento alimentação / casal</span>
+      <span class="hero-budget-val bv-barcelona">~€95 / dia</span>
+    </div>
+  </div>
+  <div class="day-selector" id="days-barcelona"></div>
+  <div class="timeline" id="timeline-barcelona">
+
+    <!-- Barcelona Dia 1 · 17 mai (dom) -->
+    <div class="day-content" id="barcelona-day-0">
+      <div class="day-title-bar"><h3>Chegada + La Boqueria + Barceloneta</h3><span>17 mai · dom</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>09h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">✈️ Chegada</div>
+          <div class="act-name">Aeroporto → Plaça Catalunya · Aerobús</div>
+          <div class="act-desc">Aerobús direto do aeroporto até a Plaça Catalunya. Conveniente, confiável e econômico.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €12,40/pessoa</span><span class="meta-chip transport">🚌 ~35 min</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>10h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🏨 Check-in</div>
+          <div class="act-name">Carrer de la Canuda, 13</div>
+          <div class="act-desc">3 min de Plaça Catalunya — localização perfeita. Deixe as malas e siga direto para o domingo especial.</div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>10h30</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">☕ Café da manhã</div>
+          <div class="act-name">Café no Gòtic · Bar local</div>
+          <div class="act-desc">Domingo de manhã no Bairro Gótico: café com leite, croissant de mantequilla e zumo de naranja. Ambiente catalão genuíno antes de explorar.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €10–14 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>11h30</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🛒 Mercado</div>
+          <div class="act-name">La Boqueria · Mercat de Sant Josep</div>
+          <div class="act-desc">Domingo é um dos melhores dias para visitar a Boqueria antes do grande movimento. Frutas tropicais, jamón, queijos e petiscos. Às 11h ainda está relativamente tranquilo — perfeito para explorar!</div>
+          <div class="act-meta"><span class="meta-chip tip">💡 Evite os bares na entrada — são os mais caros. Vá ao fundo do mercado!</span><span class="meta-chip cost">💶 Petiscos: €15–20 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>13h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🏖️ Praia!</div>
+          <div class="act-name">Praia da Barceloneta</div>
+          <div class="act-desc">A praia urbana mais famosa da Europa — domingo de sol em Barcelona com o Mediterrâneo. Mergulho, banho de sol e passeio pelo calçadão. Primeiro contato com o mar catalão!</div>
+          <div class="act-meta"><span class="meta-chip transport">🚇 Metrô L4 · Barceloneta · 10 min</span><span class="meta-chip tip">💡 Chinelos e protetor solar obrigatórios</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>14h30</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🍽️ Almoço</div>
+          <div class="act-name">La Mar Salada · Barceloneta</div>
+          <div class="act-desc">Restaurante de frutos do mar com vista para o porto. Paella de marisco ou fideuà (macarrão catalão no lugar do arroz) são as especialidades. Vista espetacular.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €35–45 casal</span><span class="meta-chip tip">💡 Alternativa econômica: chiringuito (barraca) na praia com bocadillo (~€12)</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>16h30</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🏰 Tarde</div>
+          <div class="act-name">Bairro Gótico + Las Ramblas</div>
+          <div class="act-desc">O coração medieval de Barcelona: ruas sinuosas, Catedral Gótica e a famosa Rambla com artistas de rua. Explore sem roteiro — deixe o Gótico surpreender.</div>
+          <div class="act-meta"><span class="meta-chip tip">💡 Cuidado com batedores de carteira nas Ramblas — bolso da frente!</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>20h30</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🍽️ Jantar</div>
+          <div class="act-name">La Alcoba Azul · El Born</div>
+          <div class="act-desc">Restaurante catalão charmoso com botifarra amb mongetes (salsicha com feijão branco) e tapas criativas. Ambiente íntimo e genuinamente local.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€30 casal</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barcelona Dia 2 · 18 mai (seg) -->
+    <div class="day-content" id="barcelona-day-1">
+      <div class="day-title-bar"><h3>Modernismo · Batlló + Sagrada Família</h3><span>18 mai · seg</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>07h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🏃 Corrida</div>
+          <div class="act-name">Ramblas + Passeig de Colom</div>
+          <div class="act-desc">4km pelo litoral ao amanhecer — chegue até o monumento a Cristóvão Colombo e veja o porto de Barcelona acordar.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>08h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">☕ Café da manhã</div>
+          <div class="act-name">Forn de pa · Passeig de Gràcia</div>
+          <div class="act-desc">Padaria catalã com pa amb tomàquet (pão com tomate esfregado e azeite) — o café da manhã tradicional da Catalunha. Simples, delicioso e autêntico.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €10–14 casal</span><span class="meta-chip tip">💡 O pa amb tomàquet é tão bom que vai pedir todos os dias!</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>09h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🏛️ Gaudí</div>
+          <div class="act-name">Casa Batlló</div>
+          <div class="act-desc">Uma das obras mais surpreendentes da arquitetura mundial — fachada de escamas de dragão e interior completamente orgânico. A experiência com realidade aumentada vale muito.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€35/pessoa</span><span class="meta-chip tip">💡 Reserve em casabatllo.es — esgota!</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>12h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🍽️ Almoço</div>
+          <div class="act-name">El Xampanyet · El Born</div>
+          <div class="act-desc">Tasca histórica no El Born. Embutidos, anchovas em vinagre e o famoso cava da casa. Atmosfera autêntica catalã que não mudou em décadas.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€28 casal</span><span class="meta-chip transport">🚇 Metrô L4 · 15 min</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>14h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">⛪ Destaque</div>
+          <div class="act-name">Sagrada Família</div>
+          <div class="act-desc">A obra-prima inacabada de Gaudí, em construção desde 1882. O interior com luz filtrada pelos vitrais coloridos é transcendental. Cada fachada conta uma história diferente.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€30/pessoa (com torre)</span><span class="meta-chip tip">💡 Reserve AGORA em sagradafamilia.org — esgota meses antes!</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>17h30</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">☕ Merienda</div>
+          <div class="act-name">Gelat · Sorvete Catalão</div>
+          <div class="act-desc">Passeo pelo Eixample com gelat artesanal. O bairro modernista com as casas de Gaudí na avenida principal é lindo para uma tarde a pé.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €6–8 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>20h30</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🍽️ Jantar</div>
+          <div class="act-name">Quimet i Quimet · Poble Sec</div>
+          <div class="act-desc">Tasca de pé, famosa pelos montaditos com conservas gourmet. Vermouth e tapas num espaço minúsculo e absolutamente vibrante — experiência única.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€35 casal</span><span class="meta-chip transport">🚇 Metrô L3 · 15 min</span><span class="meta-chip tip">💡 Chega às 20h — fecha quando acaba o estoque!</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barcelona Dia 3 · 19 mai (ter) -->
+    <div class="day-content" id="barcelona-day-2">
+      <div class="day-title-bar"><h3>Camp Nou + Praia Barceloneta</h3><span>19 mai · ter</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>07h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🏃 Corrida</div>
+          <div class="act-name">Praia da Barceloneta</div>
+          <div class="act-desc">5km na areia ao amanhecer. Uma das poucas praias urbanas do mundo com esta qualidade. Com o Mediterrâneo ao lado!</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span><span class="meta-chip transport">🚇 Metrô L4 · 10 min</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>08h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">☕ Café da manhã</div>
+          <div class="act-name">Café no Passeig Marítim</div>
+          <div class="act-desc">Café da manhã com vista para o mar após a corrida. Zumo de laranja, tostada com tomate e café com leite no calçadão.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €10–14 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>10h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">⚽ Tour</div>
+          <div class="act-name">Museu + Tour Camp Nou</div>
+          <div class="act-desc">O maior estádio da Europa! Tour completo: campo, vestiários históricos, museu com troféus e sala multimédia. Um templo para qualquer amante de futebol.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€34/pessoa</span><span class="meta-chip transport">🚇 Metrô L3/L5 · 28 min</span><span class="meta-chip tip">💡 Reserve em fcbarcelona.com</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>13h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🍽️ Almoço</div>
+          <div class="act-name">Can Margarit · Poble Sec</div>
+          <div class="act-desc">Restaurante catalão escondido com arròs negre (arroz negro com lula) como especialidade. Autêntico, bom preço e longe do circuito turístico.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€30 casal</span><span class="meta-chip tip">💡 Reserve com antecedência — pequeno e bom!</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>15h30</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🏖️ Relax</div>
+          <div class="act-name">Praia Barceloneta + Porto Olímpico</div>
+          <div class="act-desc">Tarde de lazer no Mediterrâneo — mergulho, banho de sol e drinks gelados na praia. Momento de descanso no meio da viagem.</div>
+          <div class="act-meta"><span class="meta-chip tip">💡 Pôr do sol aqui com a Torre Agbar ao fundo é inesquecível</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>20h30</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🍽️ Jantar</div>
+          <div class="act-name">La Paradeta · El Born</div>
+          <div class="act-desc">Conceito único: você escolhe o peixe ou marisco fresco na bancada e eles preparam na hora. Fresco, justo e delicioso — sem pressa e muito saboroso.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€30 casal</span><span class="meta-chip transport">🚇 Metrô L4 · 15 min</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barcelona Dia 4 · 20 mai (qua) -->
+    <div class="day-content" id="barcelona-day-3">
+      <div class="day-title-bar"><h3>Park Güell + Bairro Gràcia</h3><span>20 mai · qua</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>07h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🏃 Corrida</div>
+          <div class="act-name">Plaça Catalunya → Gràcia</div>
+          <div class="act-desc">4km pelas ruas planas do Eixample até o bairro boêmio de Gràcia. Barcelona acordando na quarta-feira.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>08h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">☕ Café da manhã</div>
+          <div class="act-name">Bar do Gràcia · Vermut matinal</div>
+          <div class="act-desc">Em Gràcia, os bares locais já abrem com pa amb tomàquet, cafe amb llet e até um vermut matinal — o ritual catalão de bom dia.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €10–12 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>09h30</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🌿 Gaudí</div>
+          <div class="act-name">Park Güell</div>
+          <div class="act-desc">Parque alucinante com mosaicos coloridos, salamandra icônica e vista panorâmica de Barcelona e do Mar Mediterrâneo. A zona monumental precisa de ingresso reservado.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €10/pessoa (zona monumental)</span><span class="meta-chip transport">🚌 Ônibus 24 do Passeig de Gràcia</span><span class="meta-chip tip">💡 Reserve em parkguell.barcelona</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>12h30</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🍽️ Almoço</div>
+          <div class="act-name">Bar Canigó · Gràcia</div>
+          <div class="act-desc">Bar de vizinhança com tapas de alcachofra (carxofes), croquetes e vermut. Autenticidade total longe do turismo masivo.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€25 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>14h30</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">☀️ Passeio</div>
+          <div class="act-name">Bairro Gràcia · Plaça del Sol</div>
+          <div class="act-desc">O bairro mais boêmio de Barcelona. Praças com terraços animados, ateliês independentes, livrarias e lojas de moda local. Perfeito para compras alternativas.</div>
+          <div class="act-meta"><span class="meta-chip tip">💡 Plaça del Sol e Plaça de la Vila de Gràcia são pontos de encontro dos moradores</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>18h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🛍️ Compras · Passeig de Gràcia</div>
+          <div class="act-name">Compras na Avenida mais elegante</div>
+          <div class="act-desc">Zara, Mango, Massimo Dutti e todas as grandes marcas espanholas na avenida mais glamourosa de Barcelona. Também passam pelas casas de Gaudí.</div>
+          <div class="act-meta"><span class="meta-chip tip">💡 El Corte Inglés no final da avenida tem ótima seção gourmet para souvenirs</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>21h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🍽️ Jantar</div>
+          <div class="act-name">La Paradeta Gràcia · Frutos do Mar</div>
+          <div class="act-desc">Segunda visita à Paradeta na filial de Gràcia. Suquet de peixe e amêijoas — a culinária do mar catalão na sua essência.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€35 casal</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barcelona Dia 5 · 21 mai (qui) -->
+    <div class="day-content" id="barcelona-day-4">
+      <div class="day-title-bar"><h3>Montjuïc + Fontes Mágicas</h3><span>21 mai · qui</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>07h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🏃 Corrida</div>
+          <div class="act-name">Trilhas de Montjuïc</div>
+          <div class="act-desc">4km pelos mirantes com vista do porto e do mar. Corrida com cenário cinematográfico — uma das mais belas da viagem.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span><span class="meta-chip transport">🚇 Metrô L3 · 18 min</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>08h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">☕ Café da manhã</div>
+          <div class="act-name">Café no Poble Sec</div>
+          <div class="act-desc">O Poble Sec tem uma cena de cafés e padarias excelente. Café da manhã tranquilo antes de subir ao castelo.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €10–12 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>09h30</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🏰 Vista</div>
+          <div class="act-name">Montjuïc · Funicular + Castelo + Teleférico</div>
+          <div class="act-desc">Suba de funicular ao castelo medieval. O teleférico com vista do porto e de Barceloneta é espetacular. Vista 360° de toda Barcelona.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€30/pessoa (castelo + telefèric)</span><span class="meta-chip tip">💡 Vá cedo — mais fresco e sem multidão</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>13h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🍽️ Almoço</div>
+          <div class="act-name">Tickets · Poble Sec</div>
+          <div class="act-desc">Bar de tapas do chef Albert Adrià (irmão de Ferran). Cochifrito de polvo e butifarra em versão criativa. Reserva difícil mas vale o esforço.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€35 casal</span><span class="meta-chip tip">💡 Reserve meses antes em ticketsbar.es</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>16h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🌅 Mirante</div>
+          <div class="act-name">Mirante do Migdia · Pôr do Sol</div>
+          <div class="act-desc">Ponto secreto dos barceloneses no lado oposto do castelo, com o pôr do sol direto sobre o Mediterrâneo. Completamente gratuito e pouco turístico.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span><span class="meta-chip tip">💡 Um dos pôr do sol mais belos da Europa</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>19h30</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">🍽️ Jantar</div>
+          <div class="act-name">El Quim de la Boqueria</div>
+          <div class="act-desc">Balcão dentro da Boqueria aberto até tarde. Ovos com foie, panellets e crema catalana. Jantar antes das Fontes Mágicas.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€30 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>21h30</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">⛲ Espetáculo</div>
+          <div class="act-name">Fontes Mágicas de Montjuïc</div>
+          <div class="act-desc">Show gratuito de luz, água e música nas fontes de 1929. Espetáculo às 21h30 e 22h30. Uma das experiências mais bonitas de Barcelona — e completamente grátis!</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span><span class="meta-chip tip">💡 Chegue 30 min antes para boa posição frontal</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barcelona Dia 6 · 22 mai (sex) -->
+    <div class="day-content" id="barcelona-day-5">
+      <div class="day-title-bar"><h3>Partida para Lisboa II</h3><span>22 mai · sex</span></div>
+      <div class="activity">
+        <div class="act-time"><span>04h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">☕ Café</div>
+          <div class="act-name">Café na hospedagem</div>
+          <div class="act-desc">Saída muito cedo — sem corrida. Malas prontas desde a véspera. Café rápido e direto ao Aerobús.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 ~€10 casal</span></div>
+        </div>
+      </div>
+      <div class="activity">
+        <div class="act-time"><span>05h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">✈️ Partida</div>
+          <div class="act-name">Aerobús → Aeroporto El Prat</div>
+          <div class="act-desc">Aerobús da Plaça Catalunya. Confiável mesmo de madrugada.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €12,40/pessoa</span><span class="meta-chip transport">🚌 ~35 min</span></div>
+        </div>
+      </div>
+      <div class="activity">
+        <div class="act-time"><span>07h00</span></div>
+        <div class="act-dot"><div class="dot dot-barcelona"></div></div>
+        <div class="act-card">
+          <div class="act-type type-barcelona">✈️ Voo</div>
+          <div class="act-name">Barcelona → Lisboa</div>
+          <div class="act-desc">~2h de voo. O capítulo final da viagem: um encerramento especial em Lisboa!</div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /timeline-barcelona -->
+
+  <div class="budget-card">
+    <div class="budget-header">💶 Estimativa · Barcelona</div>
+    <div class="budget-row"><span class="budget-label">Alimentação (5 dias)</span><span class="budget-amount ba-barcelona">€475</span></div>
+    <div class="budget-row"><span class="budget-label">Gaudí (Batlló + Sagrada + Güell)</span><span class="budget-amount ba-barcelona">~€170</span></div>
+    <div class="budget-row"><span class="budget-label">Camp Nou + Montjuïc</span><span class="budget-amount ba-barcelona">~€100</span></div>
+    <div class="budget-row"><span class="budget-label">Transporte</span><span class="budget-amount ba-barcelona">~€60</span></div>
+    <div class="budget-total"><span class="budget-total-label">Total estimado</span><span class="budget-total-amount">€805–900</span></div>
+  </div>
+  <div class="tips-box">
+    <div class="tips-title">💡 Dicas Essenciais · Barcelona</div>
+    <div class="tip-item"><span class="tip-icon">🎫</span><span>T-Casual metrô (10 viagens €12,15) — essencial para se locomover</span></div>
+    <div class="tip-item"><span class="tip-icon">⛪</span><span>Sagrada Família e Batlló: compre ingressos com meses de antecedência!</span></div>
+    <div class="tip-item"><span class="tip-icon">🏖️</span><span>Leve protetor solar e canga — praias em maio já estão quentes</span></div>
+    <div class="tip-item"><span class="tip-icon">🗣️</span><span>Catalans preferem catalão, mas castelhano funciona perfeitamente</span></div>
+    <div class="tip-item"><span class="tip-icon">🌡️</span><span>Maio: 18–26°C — clima mediterrâneo perfeito para praia e passeios</span></div>
+  </div>
+</div><!-- /view-barcelona -->
+
+<!-- ═══════════════════════ LISBOA II ═══════════════════════ -->
+<div class="city-view" id="view-lisboa2">
+  <div class="city-hero hero-lisboa">
+    <div class="hero-emoji">🇵🇹✨</div>
+    <div class="hero-city-name">Lisboa II</div>
+    <div class="hero-dates">22 mai (sex) · 09h → 23 mai (sáb) · voo</div>
+    <div class="hero-tags">
+      <span class="hero-tag tag-lisboa">🍷 Despedida</span>
+      <span class="hero-tag tag-lisboa">🛍️ Últimas compras</span>
+      <span class="hero-tag tag-lisboa">💛 Memórias</span>
+    </div>
+    <div class="hero-budget">
+      <span class="hero-budget-label">Orçamento alimentação</span>
+      <span class="hero-budget-val bv-lisboa">~€80–100 casal</span>
+    </div>
+  </div>
+  <div class="day-selector" id="days-lisboa2"></div>
+  <div class="timeline" id="timeline-lisboa2">
+
+    <!-- Lisboa II Dia 1 · 22 mai (sex) -->
+    <div class="day-content" id="lisboa2-day-0">
+      <div class="day-title-bar"><h3>Encerramento em Lisboa</h3><span>22 mai · sex</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>09h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">✈️ Chegada</div>
+          <div class="act-name">Aeroporto → Hotel</div>
+          <div class="act-desc">Retorno a Lisboa para um encerramento especial da viagem europeia.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €8–12 casal (Bolt)</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>10h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">☕ Café da manhã especial</div>
+          <div class="act-name">Pastéis de Belém ou Manteigaria</div>
+          <div class="act-desc">O último pastel de nata fresquinho em Portugal. Um ritual que merece ser vivido uma última vez com calma.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €8–12 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>11h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🛍️ Compras Finais</div>
+          <div class="act-name">Av. da Liberdade + Chiado</div>
+          <div class="act-desc">Últimas compras e souvenirs: conservas gourmet, vinho português, azeite, sabonetes de Castela e produtos típicos. Presentes perfeitos para levar ao Brasil.</div>
+          <div class="act-meta"><span class="meta-chip tip">💡 Conservas A Portuguesa e Comur são excelentes presentes!</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>13h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🍽️ Almoço</div>
+          <div class="act-name">Taberna da Rua das Flores ou Sea Me</div>
+          <div class="act-desc">Feche o ciclo com a Taberna (petiscos de chegada, petiscos de despedida) ou vá ao Sea Me para um último almoço de peixe e frutos do mar portugueses.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €30–40 casal</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>15h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🌅 Último Miradouro</div>
+          <div class="act-name">Miradouro de Santa Catarina</div>
+          <div class="act-desc">O miradouro mais boêmio de Lisboa, com vista da Ponte 25 de Abril, do Tejo e do pôr do sol. Ambiente descontraído com músicos e locais — o lugar perfeito para um último momento de contemplação europeia.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 Grátis</span><span class="meta-chip tip">💡 Ambulantes vendem ginjinha e cerveja — tome uma última ginja!</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>20h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🍷 Jantar de Encerramento</div>
+          <div class="act-name">Tasca do Chico · Bairro Alto</div>
+          <div class="act-desc">Jantar especial com fado ao vivo no Bairro Alto. Petiscos portugueses raiz com cantores de fado amadores e profissionais num espaço pequeno e autêntico. O encerramento perfeito para 18 dias incríveis!</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €45–60 casal</span><span class="meta-chip tip">💡 Rue do Diário de Notícias, 39 — reserve com antecedência</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lisboa II Dia 2 · 23 mai (sáb) -->
+    <div class="day-content" id="lisboa2-day-1">
+      <div class="day-title-bar"><h3>Voo para o Brasil 🇧🇷</h3><span>23 mai · sáb</span></div>
+
+      <div class="activity">
+        <div class="act-time"><span>10h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">☕ Última manhã europeia</div>
+          <div class="act-name">Café da manhã no hotel</div>
+          <div class="act-desc">Café com leite e torrada portuguesa. Faça o check-out, organize as malas e relembre cada momento desta viagem extraordinária.</div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>11h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🚗 Aeroporto</div>
+          <div class="act-name">Bolt/Uber → Aeroporto de Lisboa</div>
+          <div class="act-desc">Com voo às 14h, saída às 11h garante 3h de antecedência para check-in e compras no duty free.</div>
+          <div class="act-meta"><span class="meta-chip cost">💶 €8–12 casal</span><span class="meta-chip transport">🚗 ~25 min</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>12h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">🛍️ Duty Free</div>
+          <div class="act-name">Aeroporto · Últimas compras</div>
+          <div class="act-desc">Vinho português (Alentejo e Douro são os melhores), chocolates, perfumes e souvenirs de última hora — às vezes com preços melhores do que na cidade.</div>
+          <div class="act-meta"><span class="meta-chip tip">💡 Vinho em garrafa plástica (bagagem de porão) economiza espaço</span></div>
+        </div>
+      </div>
+
+      <div class="activity">
+        <div class="act-time"><span>14h00</span></div>
+        <div class="act-dot"><div class="dot dot-lisboa"></div></div>
+        <div class="act-card">
+          <div class="act-type type-lisboa">✈️ Voo para o Brasil</div>
+          <div class="act-name">Lisboa → Rio de Janeiro 🇧🇷</div>
+          <div class="act-desc">Fim da aventura europeia. 18 dias, 4 países, cidades inesquecíveis, gastronomia incrível e memórias para a vida toda. Até a próxima, Europa! 🥂</div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /timeline-lisboa2 -->
+
+  <div class="budget-card">
+    <div class="budget-header">💶 Resumo Geral da Viagem</div>
+    <div class="budget-row"><span class="budget-label">🇵🇹 Lisboa I</span><span class="budget-amount ba-lisboa">€340–420</span></div>
+    <div class="budget-row"><span class="budget-label">🇪🇸 Madrid</span><span class="budget-amount ba-madri">€630–830</span></div>
+    <div class="budget-row"><span class="budget-label">🇫🇷 Paris</span><span class="budget-amount ba-paris">€1.080–1.200</span></div>
+    <div class="budget-row"><span class="budget-label">🏖️ Barcelona</span><span class="budget-amount ba-barcelona">€805–900</span></div>
+    <div class="budget-row"><span class="budget-label">🇵🇹 Lisboa II</span><span class="budget-amount ba-lisboa">€150–200</span></div>
+    <div class="budget-total"><span class="budget-total-label">TOTAL (excl. passagens/hotel)</span><span class="budget-total-amount">€3.005–3.550</span></div>
+  </div>
+  <div class="tips-box">
+    <div class="tips-title">🌍 Dicas para a Viagem Toda</div>
+    <div class="tip-item"><span class="tip-icon">💳</span><span>Wise ou Nomad: sem IOF, câmbio real. Indispensável em toda a viagem</span></div>
+    <div class="tip-item"><span class="tip-icon">📱</span><span>eSIM Airalo: chip europeu digital válido em todos os 4 países</span></div>
+    <div class="tip-item"><span class="tip-icon">🎫</span><span>Reserve Sagrada Família, Louvre e Torre Eiffel com meses de antecedência</span></div>
+    <div class="tip-item"><span class="tip-icon">📸</span><span>Google Lens: aponte para cardápios em outros idiomas e traduza na hora</span></div>
+    <div class="tip-item"><span class="tip-icon">🏃</span><span>Strava tem rotas criadas por outros corredores em cada cidade europeia</span></div>
+    <div class="tip-item"><span class="tip-icon">🎒</span><span>Mala de mão 10kg + despachada: liberdade nos deslocamentos entre cidades</span></div>
+  </div>
+</div><!-- /view-lisboa2 -->
+
+<div class="bottom-safe"></div>
+</div><!-- /phone-shell -->
+
+<script>
+const cities = {
+  lisboa:    { color: 'lisboa',    days: [{num:'05',label:'mai'},{num:'06',label:'mai'},{num:'07',label:'mai'},{num:'08',label:'mai'}] },
+  madri:     { color: 'madri',     days: [{num:'08',label:'mai'},{num:'09',label:'mai'},{num:'10',label:'mai'},{num:'11',label:'mai'},{num:'12',label:'mai'}] },
+  paris:     { color: 'paris',     days: [{num:'12',label:'mai'},{num:'13',label:'mai'},{num:'14',label:'mai'},{num:'15',label:'mai'},{num:'16',label:'mai'},{num:'17',label:'mai'}] },
+  barcelona: { color: 'barcelona', days: [{num:'17',label:'mai'},{num:'18',label:'mai'},{num:'19',label:'mai'},{num:'20',label:'mai'},{num:'21',label:'mai'},{num:'22',label:'mai'}] },
+  lisboa2:   { color: 'lisboa2',   days: [{num:'22',label:'mai'},{num:'23',label:'mai'}] }
+};
+
+let currentCity = 'lisboa';
+let currentDay = {};
+Object.keys(cities).forEach(c => currentDay[c] = 0);
+
+Object.entries(cities).forEach(([city, data]) => {
+  const container = document.getElementById(`days-${city}`);
+  data.days.forEach((d, i) => {
+    const btn = document.createElement('button');
+    btn.className = `day-btn ${i === 0 ? 'active-' + data.color : ''}`;
+    btn.id = `day-btn-${city}-${i}`;
+    btn.innerHTML = `<span class="day-num">${d.num}</span><span class="day-label">${d.label}</span>`;
+    btn.onclick = () => switchDay(city, i);
+    container.appendChild(btn);
+  });
+});
+
+switchCity('lisboa');
+
+function switchCity(city) {
+  document.querySelectorAll('.city-tab').forEach(t => t.className = 'city-tab');
+  const tab = document.getElementById(`tab-${city}`);
+  if (tab) tab.className = `city-tab active-${cities[city].color}`;
+  document.querySelectorAll('.city-view').forEach(v => v.classList.remove('active'));
+  const view = document.getElementById(`view-${city}`);
+  if (view) view.classList.add('active');
+  currentCity = city;
+  switchDay(city, currentDay[city]);
+}
+
+function switchDay(city, idx) {
+  currentDay[city] = idx;
+  const col = cities[city].color;
+  cities[city].days.forEach((_, i) => {
+    const btn = document.getElementById(`day-btn-${city}-${i}`);
+    if (btn) btn.className = `day-btn ${i === idx ? 'active-' + col : ''}`;
+  });
+  const timeline = document.getElementById(`timeline-${city}`);
+  if (!timeline) return;
+  timeline.querySelectorAll('.day-content').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+}
+</script>
+</body>
+</html>
